@@ -30,6 +30,12 @@
         iwindow.head.appendChild(style);
 
         return false;
-    })
+    });
 
-})(jQuery, window)
+    $(".editor-window").hover(function () {
+        $(this).find(".editor-label").css({"opacity":"0.3"});
+    }, function () {
+        $(this).find(".editor-label").css({"opacity":"1"});
+    });
+
+})(jQuery, window);

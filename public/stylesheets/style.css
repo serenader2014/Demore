@@ -11,6 +11,11 @@ a {
   color: #00B7FF;
 }
 
+/*.leftsidebar {
+    height: 100%;
+    float: left;
+}*/
+
 .editor-wrapper {
     position: absolute;
     top: 61px;

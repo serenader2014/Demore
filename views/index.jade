@@ -3,9 +3,9 @@ block extra_css
     link(href='/stylesheets/bootstrap.css', type='text/css', rel='stylesheet')
     link(href='/stylesheets/codemirror.css', type='text/css', rel='stylesheet')
 block content
-    nav.navbar.navbar-default.navbar-static-top(role='navigation')
-        div.container
-            div.navbar-header
+    section.container
+        nav.navbar.navbar-default.navbar-static-top(role='navigation')
+            header.navbar-header
                 button(type='button', data-toggle='collapse', data-target='.navbar-collapse').navbar-toggle
                     span.sr-only Toggle navigation
                     span.icon-bar
@@ -13,26 +13,28 @@ block content
                     span.icon-bar
                     span.icon-bar
                 a.navbar-brand(href='#') Demo Tools
-            div.navbar-collapse.collapse
+            header.navbar-collapse.collapse
                 ul.nav.navbar-nav
                     li: a.run(href='#') Run
                     li: a(href='#') Browse All Project
                 ul.nav.navbar-nav.navbar-right
                     li: a(href='/signin') Sign In
                     li: a(href='/signup') Sign Up
-    div.container.editor-wrapper
+    section.col-xs-2.leftsidebar
+        div lallaalalallal
+    section.editor-wrapper
         div.row.editor-row
-            div.col-xs-6.html
+            article.col-xs-6.html.editor-window
                 span.editor-label HTML
                 textarea.editor-html
-            div.col-xs-6.css
+            article.col-xs-6.css.editor-window
                 span.editor-label CSS
                 textarea.editor-css
         div.row.editor-row
-            div.col-xs-6.javascript
+            article.col-xs-6.javascript.editor-window
                 span.editor-label JavaScript
                 textarea.editor-javascript
-            div.col-xs-6
+            article.col-xs-6.editor-window
                 span.editor-label Result
                 iframe.editor-result
 block extra_script
