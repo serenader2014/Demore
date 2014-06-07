@@ -7,6 +7,6 @@ var PostSchema = new Schema({
     author: {type: String},
     tags: {type: Array},
     post: {type: String}
-})
+});
 
 mongoose.model("Post", PostSchema);

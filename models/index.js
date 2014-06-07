@@ -6,7 +6,7 @@ mongoose.connect(config.db, function (err) {
         console.log(err);
         process.exit(1);
     }
-})
+});
 
 require("./user");
 require("./post");
