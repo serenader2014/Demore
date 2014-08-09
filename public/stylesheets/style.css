@@ -67,3 +67,8 @@ a {
 .CodeMirror-hscrollbar {
     display: none !important;
 }
+
+.setting {
+    margin-left: 5px;
+    cursor: pointer;
+}

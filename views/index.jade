@@ -3,7 +3,7 @@ block extra_css
     link(href='/stylesheets/bootstrap.css', type='text/css', rel='stylesheet')
     link(href='/stylesheets/codemirror.css', type='text/css', rel='stylesheet')
 block content
-    section.container
+    section.outer
         nav.navbar.navbar-default.navbar-static-top(role='navigation')
             header.navbar-header
                 button(type='button', data-toggle='collapse', data-target='.navbar-collapse').navbar-toggle
@@ -20,23 +20,76 @@ block content
                 ul.nav.navbar-nav.navbar-right
                     li: a(href='/signin') Sign In
                     li: a(href='/signup') Sign Up
-    section.col-xs-2.leftsidebar
-        div lallaalalallal
     section.editor-wrapper
         div.row.editor-row
             article.col-xs-6.html.editor-window
-                span.editor-label HTML
+                span.editor-label 
+                    | HTML
+                    i.glyphicon.glyphicon-cog.setting.html-setting(data-toggle='modal',data-target='#html-setting')
                 textarea.editor-html
             article.col-xs-6.css.editor-window
-                span.editor-label CSS
+                span.editor-label 
+                    | CSS
+                    i.glyphicon.glyphicon-cog.setting.css-setting
                 textarea.editor-css
         div.row.editor-row
             article.col-xs-6.javascript.editor-window
-                span.editor-label JavaScript
+                span.editor-label 
+                    | JavaScript
+                    i.glyphicon.glyphicon-cog.setting.js-setting(data-toggle='modal',data-target='#js-setting')
                 textarea.editor-javascript
             article.col-xs-6.editor-window
                 span.editor-label Result
                 iframe.editor-result
+
+        div.modal.fade#html-setting
+            div.modal-dialog
+                div.modal-content
+                    div.modal-header
+                        button.close(type='button', data-dismiss='modal')
+                            span(aria-hidden='true') &times;
+                            span.sr-only Close
+                        h4.modal-title title
+                    div.modal-body
+
+                    div.modal-footer
+                        button.btn.btn-default(type='button', data-dismiss='modal') Close
+                        button.btn.btn-primary(type='button') Save
+        div.modal.fade#js-setting
+            div.modal-dialog
+                div.modal-content
+                    div.modal-header
+                        button.close(type='button', data-dismiss='modal')
+                            span(aria-hidden='true') &times;
+                            span.sr-only Close
+                        h4.modal-title JavaScript Setting
+                    div.modal-body
+                        div.btn-group
+                            button.btn.btn-default.dropdown-toggle(type='button', data-toggle='dropdown')
+                                | Add libs
+                                span.caret
+                            div.input-group
+                                input.form-control.external-lib(type='text', placeholder='External libs')
+                                div.input-group-btn
+                                    button.btn.btn-default.add-external Add
+                            ul.dropdown-menu.select-libs(role='menu')
+                                li: a(href='#', data-lib='jQuery') jQuery
+                                li: a(href='#', data-lib='Backbone') Backbone
+                                li: a(href='#', data-lib='Underscore') Underscore
+                                li: a(href='#', data-lib='Angular') Angular
+                                li: a(href='#', data-lib='Ember') Ember
+
+                        div.panel.panel-default
+                            div.panel-heading
+                                h3.panel-title Added libs
+                            div.panel-body
+                                div.list-group.libs-list
+
+          div.modal-footer
+                        button.btn.btn-default(type='button', data-dismiss='modal') Close
+                        button.btn.btn-primary(type='button') Save
+        
+
 block extra_script
     script(src='/javascripts/jquery-2.1.0.min.js', type='text/javascript')
     script(src='/javascripts/codemirror.js')
