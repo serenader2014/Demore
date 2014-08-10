@@ -10,6 +10,10 @@
     "jade": "*",
     "mongoose": "2.8.3",
     "validator": "3.5.1",
-    "xss": "0.1.7"
+    "xss": "0.1.7",
+    "node-sass": "0.9.3",
+    "coffee-script": "1.7.1",
+    "marked": "0.3.2",
+    "less": "1.7.4"
   }
 }
