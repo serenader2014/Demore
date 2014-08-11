@@ -56,19 +56,52 @@ Demore.prototype = {
 
     init: function () {
         var self = this;
-        this.aceHTML = ace.edit(self.css.htmlInput);
-        this.aceHTML.setTheme('ace/theme/monokai');
-        this.aceHTML.setShowPrintMargin(false);
-        this.aceHTML.getSession().setMode('ace/mode/html');
 
+        this.aceHTML = ace.edit(self.css.htmlInput);
         this.aceCSS = ace.edit(self.css.cssInput);
-        this.aceCSS.setTheme('ace/theme/monokai');
-        this.aceCSS.setShowPrintMargin(false);
+        this.aceJAVASCRIPT = ace.edit(self.css.jsInput);
+        var emmet = ace.require('ace/ext/emmet');
+        var editors = [this.aceHTML, this.aceCSS, this.aceJAVASCRIPT];
+
+        $.each(editors, function (index, e) {
+            e.setTheme('ace/theme/monokai');
+            e.setShowPrintMargin(false);
+            e.getSession().setUseWrapMode(true);
+            e.setFontSize(15);
+            e.commands.addCommands([
+            {
+                name: 'run',
+                bindKey: {win: 'Alt-Enter'},
+                exec: function () {
+                    $(self.css.convertBtn).trigger('click');
+                }
+            },
+            {
+                name: 'nextline',
+                bindKey: {win: 'Ctrl-Enter'},
+                exec: function (editor) {
+                    editor.navigateLineEnd();
+                    editor.insert('\n');
+                }
+            }
+            ]);
+
+            e.on('focus', function () {
+                $(e.container).siblings('.editor-label').css({
+                    opacity: 0.3
+                });
+            });
+            e.on('blur', function () {
+               $(e.container).siblings('.editor-label').css({
+                    opacity: 1
+                }); 
+            });
+        });
+        this.aceHTML.getSession().setMode('ace/mode/html');
+        this.aceHTML.setOption('enableEmmet', true);
+
         this.aceCSS.getSession().setMode('ace/mode/css');
 
-        this.aceJAVASCRIPT = ace.edit(self.css.jsInput);
-        this.aceJAVASCRIPT.setTheme('ace/theme/monokai');
-        this.aceJAVASCRIPT.setShowPrintMargin(false);
         this.aceJAVASCRIPT.getSession().setMode('ace/mode/javascript');
 
         this.eventBinding();
@@ -335,6 +368,9 @@ Demore.prototype = {
             $(self.css.resultContainer).append(iframe);
             self.run();
         });
+
+
+
 
 
         return this;
