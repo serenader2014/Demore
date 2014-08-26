@@ -8,6 +8,7 @@ var routes = require('./routes');
 var http = require('http');
 var path = require('path');
 var config = require('./config');
+var MongoStore = require('connect-mongo')(express);
 
 var app = express();
 
@@ -23,9 +24,14 @@ app.use(express.bodyParser({
 app.use(express.methodOverride());
 app.use(express.cookieParser());
 app.use(express.session({
-    secret: config.session_secret
+    name: 'demo session',
+    secret: config.session_secret,
+    store: new MongoStore({
+        url: config.db
+    }),
+    resave: true,
+    saveUninitialized: true
 }));
-//app.use(require('./controllers/sign').auth_user);
 app.use(express.static(path.join(__dirname, 'public')));
 
 // development only

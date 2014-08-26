@@ -9,6 +9,7 @@
     "express": "3.4.8",
     "jade": "*",
     "mongoose": "2.8.3",
+    "connect-mongo": "0.4.1",
     "validator": "3.5.1",
     "xss": "0.1.7",
     "node-sass": "0.9.3",

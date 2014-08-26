@@ -1,20 +1,3 @@
-// TODO
-
-// - add external css feature
-// - improve GUI
-// - improve client side js code
-// - add user signin/signup/signout feature
-// - saving system. save user's demo to mongodb. demo sharing system
-// - user can upload their js/css/img/others files, in order to include them in the demo
-// - support jade and markdown
-// - support coffeescript
-// - support sass/scss/less  // 5,6,7 convert the code in the client side if possible
-// - add private demo
-// - create a desktop/offline version, using nodewebkit/static file
-// - add instant preview
-
-
-
 var Demore = function () {
 
     if (this instanceof Demore) {
@@ -71,7 +54,7 @@ Demore.prototype = {
             e.commands.addCommands([
             {
                 name: 'run',
-                bindKey: {win: 'Alt-Enter'},
+                bindKey: {win: 'Ctrl-S'},
                 exec: function () {
                     $(self.css.convertBtn).trigger('click');
                 }
@@ -82,6 +65,78 @@ Demore.prototype = {
                 exec: function (editor) {
                     editor.navigateLineEnd();
                     editor.insert('\n');
+                }
+            },
+            {
+                name: 'switchToNextEditor',
+                bindKey: {win: 'Alt-Right'},
+                exec: function (editor) {
+                    editor.blur();
+                    if (editors[index+1]) {
+                        editors[index+1].focus();
+                        if ($(editor.container).parents('.editor-window').hasClass('fs')) {
+                            $(editor.container).parents('.editor-window').removeClass('fs');
+                            $(editors[index+1].container).parents('.editor-window').addClass('fs');
+                        }                        
+                    } else {
+                        editors[0].focus();
+                        if ($(editor.container).parents('.editor-window').hasClass('fs')) {
+                            $(editor.container).parents('.editor-window').removeClass('fs');
+                            $(editors[0].container).parents('.editor-window').addClass('fs');
+                        }                        
+                    }
+                }
+            },
+            {
+                name: 'switchToPrevEditor',
+                bindKey: {win: 'Alt-Left'},
+                exec: function (editor) {
+                    editor.blur();
+                    if (editors[index-1]) {
+                        editors[index-1].focus();
+                        if ($(editor.container).parents('.editor-window').hasClass('fs')) {
+                            $(editor.container).parents('.editor-window').removeClass('fs');
+                            $(editors[index-1].container).parents('.editor-window').addClass('fs');
+                        }
+                    } else {
+                        editors[editors.length-1].focus();
+                        if ($(editor.container).parents('.editor-window').hasClass('fs')) {
+                            $(editor.container).parents('.editor-window').removeClass('fs');
+                            $(editors[editors.length-1].container).parents('.editor-window').addClass('fs');
+                        }
+                    }
+                }
+            },
+            {
+                name: 'fullScreen',
+                bindKey: {win: 'F11'},
+                exec: function (editor) {
+                    if ($(editor.container).parents('.editor-window').hasClass('fs')) {
+                        $(editor.container).parents('.editor-window').removeClass('fs');
+                        // editor.resize();
+                    } else {
+                        $('.editor-window').removeClass('fs');
+                        $(editor.container).parents('.editor-window').addClass('fs');
+                        // editor.resize();
+                    }
+                }
+            },
+            {
+                name: 'openOptions',
+                bindKey: {win: 'Ctrl-Shift-Alt-O'},
+                exec: function (editor) {
+                    $(editor.container).prev().click();
+                }
+            },
+            {
+                name: 'resultFullScreen',
+                bindKey: {win: 'Alt-F11'},
+                exec: function (editor) {
+                    if ($('.result').hasClass('fs')) {
+                        $('.result').removeClass('fs');
+                    } else {
+                        $('.result').addClass('fs');
+                    }
                 }
             }
             ]);
@@ -307,6 +362,7 @@ Demore.prototype = {
         resultContainer: '.result',
         convertBtn: '.run',
         containers: '.editor-window',
+        windowWrapper: '.window-wrapper',
         libsOptions: '.select-libs a',
         libsList: '.libs-list',
         libsListItem: '.list-group-item',
@@ -365,13 +421,20 @@ Demore.prototype = {
 
         $(css.convertBtn).on('click', function () {
             var iframe = $(self.css.resultIframe).detach();
-            $(self.css.resultContainer).append(iframe);
+            $(self.css.resultContainer).find(self.css.windowWrapper).append(iframe);
             self.run();
         });
 
 
-
-
+        $('.fs-btn').on('click', function (event) {
+            event.stopPropagation();
+            if ($(this).parents('.editor-window').hasClass('fs')) {
+                $(this).parents('.editor-window').removeClass('fs');
+            } else {
+                $('.editor-window').removeClass('fs');
+                $(this).parents('.editor-window').addClass('fs');
+            }
+        });
 
         return this;
     }
