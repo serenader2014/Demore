@@ -10,4 +10,8 @@ module.exports = function (app, req, res, next) {
     app.post('/signup', site.signup);
     app.post('/signout', site.signout);
     app.post('/compile', compiler);
+
+    app.get('/admin', site.adminIndex);
+
+    app.post('/save', site.saveDemo);
 };

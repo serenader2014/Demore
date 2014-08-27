@@ -1,29 +1,38 @@
-//git test 
-/**
- * Module dependencies.
- */
-
 var express = require('express');
-var routes = require('./routes');
-var http = require('http');
 var path = require('path');
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
+var logger = require('morgan');
+var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
+var mongoose = require('mongoose');
+
 var config = require('./config');
-var MongoStore = require('connect-mongo')(express);
 
-var app = express();
+var app = module.exports.app = express();
 
-// all environments
-app.set('port', config.port);
+mongoose.connect(config.db, function (err) {
+    if (err) {
+        console.error('connect to mongodb failed.');
+        process.exit(1);
+    }
+});
+
+
+var routes = require('./routes');
+
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-app.use(express.favicon());
-app.use(express.logger('dev'));
-app.use(express.bodyParser({
-    uploadDir: config.upload_dir
-}));
-app.use(express.methodOverride());
-app.use(express.cookieParser());
-app.use(express.session({
+
+app.set('port', config.port);
+
+app.use(bodyParser.json());
+app.use(bodyParser());
+app.use(cookieParser());
+app.use(logger('dev'));
+
+
+app.use(session({
     name: 'demo session',
     secret: config.session_secret,
     store: new MongoStore({
@@ -34,15 +43,8 @@ app.use(express.session({
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// development only
-if ('development' == app.get('env')) {
-  app.use(express.errorHandler());
-}
-
-
-
-http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
+app.listen(app.get('port'), function () {
+    console.log('Demore is listening on port ' + app.get('port'));
 });
 
 routes(app);

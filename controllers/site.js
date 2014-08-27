@@ -1,9 +1,12 @@
 var User = require('../proxy').User;
 var crypto = require('crypto');
 var validator = require('validator');
+var xss = require('xss');
+
+var Demo = require('../proxy').Demo;
 
 module.exports.showIndex = function (req, res) {
-    res.render("index");
+    res.render("index", {user: req.session.user});
 };
 
 module.exports.showSignin = function (req, res) {
@@ -91,24 +94,77 @@ module.exports.signup = function (req, res, next) {
         });
         return false;
     }
-    if (password < 6 || password > 16) {
+    if (password.length < 6 || password.length > 16) {
         res.json({
             status: 0,
-            error: 'Password is limited to 6 - 16 chacrators.'
+            error: 'Password is limited to 6 - 16 chacrators.',
+            data: req.body
         });
         return false;
     }
-    if (User.checkIsExist({username: username, email: email})) {
-        res.json({
-            status: 0,
-            error: 'User is already exist'
-        });
-        return false;
-    }
-    password = md5(validator.trim(password));
-    User.newUser(username, password, email, function (err, u) {
+    User.checkIsExist({username: username, email: email}, function (err, result) {
         if (err) {
-            console.error(err);
+            res.json({
+                status: 0,
+                error: err
+            });  
+            return false;
+        }
+        if (result) {
+            res.json({
+                status: 0,
+                error: 'User is already exist'
+            });
+        } else {
+            password = md5(validator.trim(password));
+            User.newUser({username: username, email: email, password: password}, function (err, u) {
+                if (err) {
+                    console.error(err);
+                    res.json({
+                        status: 0,
+                        error: err
+                    });
+                    return false;
+                } else {
+                    res.json({
+                        status: 1,
+                        error: ''
+                    });
+                }
+            });
+        }
+    });
+};
+
+module.exports.signout = function (req, res, next) {
+
+};
+
+module.exports.adminIndex = function (req, res, next) {
+    res.render('admin', {user: req.session.user});
+};
+
+module.exports.saveDemo = function (req, res, next) {
+    var obj = {};
+    obj.author = req.session.user.username;
+    obj.title = xss(validator.trim(req.body.title));
+    obj.desc = xss(validator.trim(req.body.desc));
+    obj.html = req.body.html;
+    obj.css = req.body.css;
+    obj.js = req.body.js;
+    obj.jsLib = req.body.jsLib;
+    obj.cssLib = req.body.cssLib;
+    obj.lang = req.body.lang;
+    if (! Array.isArray(obj.jsLib) || ! Array.isArray(obj.cssLib) || !Array.isArray(obj.lang)) {
+        res.json({
+            status: 0,
+            error: 'Format incorrect.'
+        });
+        return false;
+    }
+
+    Demo.newDemo(obj, function (err) {
+        if (err) {
             res.json({
                 status: 0,
                 error: err
@@ -119,13 +175,11 @@ module.exports.signup = function (req, res, next) {
                 status: 1,
                 error: ''
             });
+            return false;
         }
     });
 };
 
-module.exports.signout = function (req, res, next) {
-
-};
 
 function md5(str) {
     return crypto.createHash('md5').update(str).digest('hex');

@@ -50,7 +50,7 @@ Demore.prototype = {
             e.setTheme('ace/theme/monokai');
             e.setShowPrintMargin(false);
             e.getSession().setUseWrapMode(true);
-            e.setFontSize(15);
+            e.setFontSize(14);
             e.commands.addCommands([
             {
                 name: 'run',
@@ -77,13 +77,15 @@ Demore.prototype = {
                         if ($(editor.container).parents('.editor-window').hasClass('fs')) {
                             $(editor.container).parents('.editor-window').removeClass('fs');
                             $(editors[index+1].container).parents('.editor-window').addClass('fs');
-                        }                        
+                            editors[index+1].resize();
+                        }
                     } else {
                         editors[0].focus();
                         if ($(editor.container).parents('.editor-window').hasClass('fs')) {
                             $(editor.container).parents('.editor-window').removeClass('fs');
                             $(editors[0].container).parents('.editor-window').addClass('fs');
-                        }                        
+                            editors[0].resize();
+                        }
                     }
                 }
             },
@@ -97,12 +99,14 @@ Demore.prototype = {
                         if ($(editor.container).parents('.editor-window').hasClass('fs')) {
                             $(editor.container).parents('.editor-window').removeClass('fs');
                             $(editors[index-1].container).parents('.editor-window').addClass('fs');
+                            editors[index-1].resize();
                         }
                     } else {
                         editors[editors.length-1].focus();
                         if ($(editor.container).parents('.editor-window').hasClass('fs')) {
                             $(editor.container).parents('.editor-window').removeClass('fs');
                             $(editors[editors.length-1].container).parents('.editor-window').addClass('fs');
+                            editors[editors.length-1].resize();
                         }
                     }
                 }
@@ -113,12 +117,11 @@ Demore.prototype = {
                 exec: function (editor) {
                     if ($(editor.container).parents('.editor-window').hasClass('fs')) {
                         $(editor.container).parents('.editor-window').removeClass('fs');
-                        // editor.resize();
                     } else {
                         $('.editor-window').removeClass('fs');
                         $(editor.container).parents('.editor-window').addClass('fs');
-                        // editor.resize();
                     }
+                    editor.resize();
                 }
             },
             {
@@ -225,8 +228,7 @@ Demore.prototype = {
                 });
 
 
-
-                js.forEach(function (j) {
+                js.forEach(function (j, i) {
                     var script = idocument.createElement('script');
                     script.innerHTML = j;
                     idocument.body.appendChild(script);
@@ -242,10 +244,8 @@ Demore.prototype = {
 
         if (self.options.css.libs.length === 0 && self.options.javascript.libs.length !== 0) {
             loadJS(callback);
-            return ;
         } else if (self.options.css.libs.length !== 0 && self.options.javascript.libs.length === 0) {
             loadCSS(callback);
-
         } else if (self.options.css.libs.length === 0 && self.options.javascript.libs.length === 0) {
             callback();
         } else {
@@ -253,18 +253,19 @@ Demore.prototype = {
                 loadJS(callback);
             });
         }
-         function loadCSS () {
+         function loadCSS (cb) {
             $.each(self.options.css.libs, function (idx, css) {
                 $.ajax({
                     url: css,
                     type: 'GET',
                     dataType: 'html',
                     crossDomain: true,
+                    async: false,
                     success: function (d) {
                         self.CSS.push(d);
 
                         if (idx === self.options.css.libs.length - 1) {
-                            callback();
+                            cb();
                         }
                     },
                     error: function (err) {
@@ -275,18 +276,19 @@ Demore.prototype = {
             });
         }
 
-        function loadJS () {
+        function loadJS (cb) {
             $.each(self.options.javascript.libs, function (index, url) {
                 $.ajax({
                     url: url,
                     type: 'GET',
                     dataType: 'html',
                     crossDomain: true,
+                    async: false,
                     success: function (data) {
                         self.JAVASCRIPT.push(data);
 
                         if (index === self.options.javascript.libs.length - 1) {
-                            callback();
+                            cb();
                         }
 
                     },
@@ -428,12 +430,50 @@ Demore.prototype = {
 
         $('.fs-btn').on('click', function (event) {
             event.stopPropagation();
-            if ($(this).parents('.editor-window').hasClass('fs')) {
-                $(this).parents('.editor-window').removeClass('fs');
+            if ($(this).parents('.editor-window').hasClass('result')) {
+                self.aceHTML.execCommand('resultFullScreen');
             } else {
-                $('.editor-window').removeClass('fs');
-                $(this).parents('.editor-window').addClass('fs');
+                var className = $(this).parents('.editor-window').attr('class').split('editor-window')[0];
+                className = $.trim('ace' + className.toUpperCase());
+                self[className].execCommand('fullScreen');
             }
+        });
+
+        $('.save').on('click', function (event) {
+            event.preventDefault();
+            var html = self.aceHTML.getValue();
+            var css = self.aceCSS.getValue();
+            var js = self.aceJAVASCRIPT.getValue();
+            var jsLib = self.options.javascript.libs;
+            var cssLib = self.options.css.libs;
+            var lang = [];
+            $.each(self.options, function (index, item) {
+                lang.push(item.lang);
+            });
+            $.ajax({
+                type: 'POST',
+                data: {
+                    html: html,
+                    css: css,
+                    js: js,
+                    jsLib: jsLib || [],
+                    cssLib: cssLib || [],
+                    lang: lang
+                },
+                dataType: 'json',
+                url: '/save',
+                success: function (result) {
+                    if (result.status === 1) {
+                        alert('saved');
+                    } else {
+                        alert(result.error);
+                    }
+                },
+                error: function (err) {
+                    alert(err);
+                }
+
+            });
         });
 
         return this;

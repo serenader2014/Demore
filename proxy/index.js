@@ -1,2 +1,2 @@
-exports.Post = require("./post");
-exports.User = require("./user");
+module.exports.User = require("./user");
+module.exports.Demo = require('./demo');

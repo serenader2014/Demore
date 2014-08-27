@@ -13,21 +13,21 @@ module.exports.newUser = function (obj, callback) {
 };
 
 module.exports.checkIsExist = function (obj, callback) {
-    User.findOne({username: obj.username}, function (err, u) {
+    User.find({username: obj.username}, function (err, u) {
         if (err) {
             callback(err);
         }
         if (u) {
-            return true;
+            callback(err, true);
         } else {
-            User.findOne({email: obj.email}, function (err, user) {
+            User.find({email: obj.email}, function (err, user) {
                 if (err) {
                     callback(err);
                 }
                 if (user) {
-                    return true;
+                    callback(err, true);
                 } else {
-                    return false;
+                    callback(err, false);
                 }
             });
         }

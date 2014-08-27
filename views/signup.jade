@@ -18,10 +18,11 @@ block extra_script
                 data: {
                     email: $('input[name="email"]').val(),
                     username: $('input[name="username"]').val(),
-                    password: $('input[name="password"]').val()
+                    password: $('input[name="password"]').val() 
                 },
                 dataType: 'json',
                 success: function (result) {
+                    console.log(result);
                     if (result.status === 1) {
                         window.location = '/signin';
                     } else {

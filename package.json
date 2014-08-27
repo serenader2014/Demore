@@ -1,20 +1,22 @@
 {
-  "name": "application-name",
+  "name": "demore",
   "version": "0.0.1",
   "private": true,
   "scripts": {
     "start": "node app.js"
   },
   "dependencies": {
-    "express": "3.4.8",
-    "jade": "*",
-    "mongoose": "2.8.3",
-    "connect-mongo": "0.4.1",
+    "express": "4.2.0",
+    "express-session": "1.6.5",
     "validator": "3.5.1",
     "xss": "0.1.7",
-    "node-sass": "0.9.3",
-    "coffee-script": "1.7.1",
+    "mongoose": "3.8.14",
     "marked": "0.3.2",
-    "less": "1.7.4"
+    "morgan": "~1.0.0",
+    "cookie-parser": "1.0.1",
+    "body-parser": "1.0.0",
+    "jade": "1.3.1",
+    "connect-mongo": "0.4.1",
+    "node-sass": "0.9.3"
   }
 }

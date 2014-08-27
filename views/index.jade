@@ -17,8 +17,12 @@ block content
                 li: a(href='#') Browse All Project
                 li: a(href='#', data-toggle='modal', data-target='#help') Help
             ul.nav.navbar-nav.navbar-right
-                li: a(href='/signin') Sign In
-                li: a(href='/signup') Sign Up
+                - if (user)
+                    li: a.save(href='/save') Save
+                    li: a(href='/member/#{user.username}') #{user.username}
+                - else
+                    li: a(href='/signin') Sign In
+                    li: a(href='/signup') Sign Up
     section.editor-wrapper
         div.editor-row
             article.html.editor-window

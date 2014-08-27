@@ -2,7 +2,6 @@ var sass = require('node-sass');
 var jade = require('jade');
 var markdown = require('marked');
 var coffee = require('../coffee-script').CoffeeScript;
-var less = require('less');
 
 
 module.exports = function (req, res, next) {
